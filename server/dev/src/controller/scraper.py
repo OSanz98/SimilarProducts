@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup
 import time
 import multiprocessing
 import sys
+from config.db import get_collection, get_product_info, store_similar_product, printAllIds
+# import pymongo
 
 def show_loading_indicator(stop_event):
     while not stop_event.is_set():
@@ -17,16 +19,14 @@ def show_loading_indicator(stop_event):
             sys.stdout.flush()
             time.sleep(0.1)
 
-def scrape_amazon(search_term, stop_event, max_results=10):
-    time.sleep(2)
+def scrape_amazon(search_term):
     # Construct the search URL for Amazon UK
-    base_url = "https://www.amazon.co.uk/s"
-    params = {"k": search_term}
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"}
-    response = requests.get(base_url, params=params, headers=headers)
+    url = f'https://www.amazon.co.uk/s?k={search_term}&ref=nb_sb_noss_1'
+    page = requests.get(url, headers=headers)
     
     # Parse the HTML content of the search results page
-    soup = BeautifulSoup(response.content, "html.parser")
+    soup = BeautifulSoup(page.content, "html.parser")
     
     # Find all the product links on the search results page
     product_links = soup.find_all("a", {"class": "a-link-normal s-no-outline"})
@@ -68,21 +68,50 @@ def scrape_amazon(search_term, stop_event, max_results=10):
         
         price = symbol + pound + fraction
         
-        products.append((title, url, image, price))
+        product_dict = {
+            "title": title,
+            "url": url,
+            "image": image,
+            "price": price
+        }
 
-    stop_event.set()
-    
+        products.append(product_dict)
     return products
+        
+
+def get_product_details(product_id, stop_event):
+    time.sleep(2)
+    print(get_product_info(get_collection('products'), '63efc0c7d8a95b0c056f8ea2'))
+    stop_event.set()
+    # try:
+    #     product_collection = get_collection('products')
+    #     product_info = get_product_info(collection=product_collection, product_id=product_id)
+    #     if product_info is not None:
+    #         result_collection = get_collection('similar_products')
+    #         link_collection = get_collection('product_to_similar')
+    #         products = scrape_amazon(product_info["title"])
+    #         # upload products to mongo db as json
+    #         result = store_similar_product(result_collection, products, product_id, link_collection)
+    #         stop_event.set()
+    #         return result
+    #     else:
+    #         stop_event.set()
+    #         return "Can't find product in collection"
+    # except Exception as e:
+    #     print(f"Error occured: {e}")
+
+    
+
 
 
 if __name__ == '__main__':
+
     stop_event = multiprocessing.Event()
 
     loading_process = multiprocessing.Process(target=show_loading_indicator, args=(stop_event,))
     loading_process.start()
 
-    text = "Oakywood Felt and Cork desk mat"
-    products = scrape_amazon(text, stop_event)
+    products = get_product_details('63efbe437e9985688441cfdd', stop_event)
     print(products)
 
     loading_process.join()
