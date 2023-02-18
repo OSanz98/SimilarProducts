@@ -6,8 +6,19 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+import multiprocessing
+import sys
 
-def scrape_amazon(search_term):
+def show_loading_indicator(stop_event):
+    while not stop_event.is_set():
+        for c in '|/-\\':
+            # writes directly to console without buffering output - carriage return overwrites previous frame
+            sys.stdout.write('\rLoading ' + c)
+            sys.stdout.flush()
+            time.sleep(0.1)
+
+def scrape_amazon(search_term, stop_event, max_results=10):
+    time.sleep(2)
     # Construct the search URL for Amazon UK
     base_url = "https://www.amazon.co.uk/s"
     params = {"k": search_term}
@@ -58,11 +69,21 @@ def scrape_amazon(search_term):
         price = symbol + pound + fraction
         
         products.append((title, url, image, price))
+
+    stop_event.set()
     
     return products
 
 
+if __name__ == '__main__':
+    stop_event = multiprocessing.Event()
 
-text = "Oakywood Felt and Cork desk mat"
-products = scrape_amazon(text)
-print(products)
+    loading_process = multiprocessing.Process(target=show_loading_indicator, args=(stop_event,))
+    loading_process.start()
+
+    text = "Oakywood Felt and Cork desk mat"
+    products = scrape_amazon(text, stop_event)
+    print(products)
+
+    loading_process.join()
+
