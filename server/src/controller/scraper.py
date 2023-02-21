@@ -78,6 +78,7 @@ def scrape_amazon(search_term):
     # Extract the URLs and titles of the products
     products = []
     for link in product_links:
+        
         url = "https://www.amazon.co.uk" + link.get("href")
         # send requests and retrieve response for the product's page
         response = requests.get(url, headers=headers)
@@ -111,7 +112,7 @@ def scrape_amazon(search_term):
             fraction = price_fraction.get_text().strip()
         
         price = symbol + pound + fraction
-        
+        print(f'operating on product: {title}')
         if cosine_similarity_score(search_term, title) > 0.4:
             product_dict = {
                 "title": title,
@@ -124,9 +125,11 @@ def scrape_amazon(search_term):
     return products
         
 
-def get_product_details(product_name, stop_event, db):
-    time.sleep(2)
+def find_similar_products(product_name, stop_event):
+    if stop_event:
+        time.sleep(2)
     try:
+        db = get_database()
         prodCollection = get_collection('products', db)
         product = get_product_info(prodCollection, product_name)
         if product is not None:
@@ -135,23 +138,25 @@ def get_product_details(product_name, stop_event, db):
             linkCollection = get_collection('product_to_similar', db)
             products = scrape_amazon(product["title"])
             result = store_similar_product(similarCollection, linkCollection, products, product["title"])
-            stop_event.set()
+            if stop_event:
+                stop_event.set()
             return result
         else:
-            stop_event.set()
-            return "Can't find product"
+            if stop_event:
+                stop_event.set()
+            return f"Can't find product: {product_name}"
     except Exception as e:
-        print(f"Error occured: {e}")
-        stop_event.set()
+        if stop_event:
+            stop_event.set()
+        return f"Error occured: {e}"
+        
 
 if __name__ == '__main__':
 
     stop_event = multiprocessing.Event()
-
     loading_process = multiprocessing.Process(target=show_loading_indicator, args=(stop_event,))
     loading_process.start()
-    database = get_database()
-    result = get_product_details('Oakywood Felt and Cork Desk Mat', stop_event, database)
+    result = find_similar_products('Oakywood Felt and Cork Desk Mat', stop_event)
     print(result)
     loading_process.join()
 
