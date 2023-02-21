@@ -1,27 +1,29 @@
-import pymongo
-# from pymongo.errors import PyMongoError
+from pymongo import MongoClient, errors
 
-client = pymongo.MongoClient('mongodb://localhost:27017/')
-db = client['SimilarProducts']
+def get_database():
+    CONNECTION_STRING = 'mongodb://localhost:27017/'
+    client = MongoClient(CONNECTION_STRING)
+    db = client['SimilarProducts']
+    return db
 
 def printAllIds(collection):
      cursor = collection.find({})
      for document in cursor:
          print(document['_id'])
 
-def get_collection(collection_name):
+def get_collection(collection_name, db):
     try:
         collection = db[collection_name]
         return collection
-    except pymongo.errors.CollectionInvalid as e:
+    except errors.CollectionInvalid as e:
         raise Exception("Invalid collection name: %s" % e)
     except Exception as e:
         raise Exception("Error occurred while connecting to database: %s" % e)
 
 
-def get_product_info(collection, product_id):
+def get_product_info(collection, product_name):
     try:
-        result = collection.find_one({'_id': product_id})
+        result = collection.find_one({"title": product_name})
         if result is not None:
             return result
         else:
@@ -40,12 +42,12 @@ def check_exists_in_collection(collection, product_title):
         raise Exception(f"Error occured while searching for product: {str(e)}")
 
 
-def store_similar_product(collection, products, original_product_id, link_collection):
+def store_similar_product(similarCollection, link_collection, products, search_product_name):
     try:
-        newList = [product for product in products if check_exists_in_collection(collection, product["title"]) == False]
+        newList = [product for product in products if check_exists_in_collection(similarCollection, product["title"]) == False]
         for prod in newList:
-            result = collection.insert_one(prod)
-            link_collection.insert_one({"product_id": original_product_id, "similar_product_id": result.inserted_id})
+            similarCollection.insert_one(prod)
+            link_collection.insert_one({"product_title": search_product_name, "similar_product_title": prod["title"]})
 
         return "Successfully updated database"
     except Exception as e:
