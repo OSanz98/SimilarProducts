@@ -6,11 +6,6 @@ def get_database():
     db = client['SimilarProducts']
     return db
 
-def printAllIds(collection):
-     cursor = collection.find({})
-     for document in cursor:
-         print(document['_id'])
-
 def get_collection(collection_name, db):
     try:
         collection = db[collection_name]
