@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const similarApp = require('./routes/similar');
-const productApp = require('./routes/products');
+const similarApp = require('./similar');
+const productApp = require('./products');
 
 const app = express();
 
