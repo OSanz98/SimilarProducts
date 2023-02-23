@@ -1,5 +1,9 @@
 const express = require('express');
+<<<<<<<< Updated upstream:server/src/routes/similar.js
 const Product = require('../models/product.js');
+========
+const Product = require('../models/product');
+>>>>>>>> Stashed changes:local/routes/similar.js
 // const {PythonShell} = require('python-shell');
 const { exec } = require('child_process');
 

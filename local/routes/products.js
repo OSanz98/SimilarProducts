@@ -1,5 +1,9 @@
 const express = require('express');
+<<<<<<<< Updated upstream:server/src/routes/products.js
 const Product = require('../models/product.js');
+========
+const Product = require('../models/product');
+>>>>>>>> Stashed changes:local/routes/products.js
 
 const productApp = express();
 
