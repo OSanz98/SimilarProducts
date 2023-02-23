@@ -1,5 +1,5 @@
-import azure.functions as func
 # import logging
+import azure.functions as func
 from pymongo import MongoClient, errors
 import requests
 from bs4 import BeautifulSoup
@@ -10,8 +10,6 @@ from azure.keyvault.secrets import SecretClient
 import os
 
 app = func.FunctionApp()
-
-# logging.basicConfig(level=logging.DEBUG)
 
 CONNECTION_STRING = None
 client = None
@@ -135,11 +133,11 @@ def cosine_similarity_score(search_term, product_name):
             return dot_product / ((search_mag * product_mag) ** 0.5)
     except Exception as e:
         return f"Couldn't calculate cosine similarity score: {e}"
+    
 
 @app.route('/api/find-products', methods=["POST"])
-def find_similar_products(req: func.HttpRequest) -> func.HttpResponse:
-    # logging.info('Find Similar Products HTTP trigger function processed a request')
-    
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    # logging.info('Python HTTP trigger function processed a request.')
     try:
         req_body = req.get_json()
     except ValueError:
@@ -165,6 +163,3 @@ def find_similar_products(req: func.HttpRequest) -> func.HttpResponse:
             return func.HttpResponse(f"Error occured: {e}")
     else:
         return func.HttpResponse("Please pass the productTitle in the request body to carry out its action.", status_code=400)
-    
-
-

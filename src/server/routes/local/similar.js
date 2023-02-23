@@ -1,5 +1,5 @@
 const express = require('express');
-const Product = require('../models/product.js');
+const Product = require('../../models/product');
 // const {PythonShell} = require('python-shell');
 const { exec } = require('child_process');
 
