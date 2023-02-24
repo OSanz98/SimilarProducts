@@ -1,4 +1,6 @@
 import React from "react";
+import './saved-products-sidebar.styles.scss';
+import SidebarMenu from "react-bootstrap-sidebar-menu";
 
 const ProductSideBar = ({products, onClick}) => {
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ProductSideBar from "../../components/saved-products-sidebar/saved-products-sidebar.component";
 import SavedProduct from "../../components/saved-product/saved-product.component";
+import './saved-products.styles.scss';
 
 const SavedProductsRoute = () => {
     const [products, setProducts] = useState([]);
@@ -19,9 +20,13 @@ const SavedProductsRoute = () => {
     }, []);
 
     return(
-        <div>
-            <ProductSideBar products={products} onClick={productHandler}/>
-            <SavedProduct product={currentProduct} />
+        <div className="saved-products-container">
+            <div className="product-sidebar-container">
+                <ProductSideBar products={products} onClick={productHandler}/>
+            </div>
+            <div className="product-data-container">
+                <SavedProduct product={currentProduct} />
+            </div>
         </div>
     );
 };
