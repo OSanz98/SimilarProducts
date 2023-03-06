@@ -22,7 +22,7 @@ def check_exists_in_collection(collection, product_title):
 def store_similar_product(similarCollection, link_collection, products, search_product_name):
     try:
         newList = [product for product in products if check_exists_in_collection(similarCollection, product["title"]) == False]
-        # newList = [product for product in products if check_exists_in_collection(similarCollection, product["title"]) == False]
+        
         if not newList:
             return "Already have found products in our database"
         else:

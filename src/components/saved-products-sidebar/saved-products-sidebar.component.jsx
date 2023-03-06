@@ -1,8 +1,9 @@
+import { Divider, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import './saved-products-sidebar.styles.scss';
-import SidebarMenu from "react-bootstrap-sidebar-menu";
 
 const ProductSideBar = ({products, onClick}) => {
+
 
     const handleClick = (product) => {
         if(onClick){
@@ -10,17 +11,24 @@ const ProductSideBar = ({products, onClick}) => {
         }
     }
 
-    return(
-        <nav className="product-sidebar">
-            <ul>
+    return (
+        <div>
+            <Toolbar>
+                <Typography color="inherit" variant="h6" noWrap component="div">Products</Typography>
+            </Toolbar>
+            <Divider />
+            <List>
                 {products.map((product) => (
-                    <li key={product.title}>
-                        <button className="sidebar-link" onClick={() => handleClick(product)}>{product.title}</button>
-                    </li>
+                    <ListItem key={product.title} disablePadding>
+                        <ListItemButton onClick={() => handleClick(product)}>
+                            <ListItemText primary={product.title} />
+                        </ListItemButton>
+                    </ListItem>
                 ))}
-            </ul>
-        </nav>
+            </List>
+        </div>
     );
+
 }
 
 export default ProductSideBar;

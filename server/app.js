@@ -5,7 +5,7 @@ const routes = require('./routes/products');
 const logger = require('morgan');
 
 const app = express();
-const port = process.env.PORT || '3000';
+const port = process.env.PORT || '8080';
 const root = './';
 
 app.use(logger('dev'));
