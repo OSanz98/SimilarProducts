@@ -2,9 +2,9 @@ import React from 'react';
 import Directory from '../../components/directory/directory.component';
 import categories from '../../constants/data/category-data';
 import UnAuthenticatedRoute from '../unauthenticated/unauthenticated.component';
-import { Box, AppBar, Toolbar, Typography, CssBaseline, Button} from '@mui/material'
+import { Box, AppBar, Toolbar, Typography, CssBaseline} from '@mui/material'
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
-import { AuthButton } from '../../components/auth-button/auth-button.component';
+import AuthButton from '../../components/auth-button/auth-button.component';
 
 const HomeRoute = () => {
     return(

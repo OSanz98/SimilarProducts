@@ -1,4 +1,3 @@
-
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { SignInButton } from '../sign-in-button/sign-in-button.component';
 import { SignOutButton } from '../sign-out-button/sign-out-button.component';
