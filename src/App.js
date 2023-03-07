@@ -1,12 +1,12 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
 import HomeRoute from './routes/home/home.component';
 import SavedProductsRoute from './routes/saved-products/saved-products.component';
-// import { MsalAuthenticationTemplate } from '@azure/msal-react'
-// import { InteractionType } from '@azure/msal-browser'
 
+import { MsalProvider } from "@azure/msal-react";
+import { CustomNavigationClient } from "./utils/NavigationClient.component";
 
-const router = createBrowserRouter([
+const authenticatedRoute = createBrowserRouter([
   {
     path: "/",
     element: <HomeRoute />
@@ -17,8 +17,29 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App = () => {
-  return <RouterProvider router={router} />;
+const App = ({pca}) => {
+
+  const navigate = useNavigate();
+  const navigationClient = new CustomNavigationClient(navigate);
+  pca.setNavigationClient(navigationClient);
+
+  // const request = {
+  //   loginHint: "name@example.com",
+  //   scopes: ["User.Read"]
+  // }
+  // const { login,  error } = useMsalAuthentication(InteractionType.Silent, request);
+
+  // useEffect(() => {
+  //     if (error instanceof InteractionRequiredAuthError) {
+  //         login(InteractionType.Popup, request);
+  //     }
+  // }, [error]);
+
+  return (  
+    <MsalProvider instance={pca}>
+      <RouterProvider router={authenticatedRoute} />
+    </MsalProvider>
+  );
 }
 
 export default App;

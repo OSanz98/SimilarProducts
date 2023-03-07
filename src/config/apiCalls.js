@@ -1,9 +1,7 @@
-import { apiRequest, msalConfig, tokenRequest } from "./authConfig";
-import * as msal from '@azure/msal-browser';
+import { apiRequest, loginRequest } from "./authConfig";
+import { msalInstance } from "../index";
 
-const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-export async function findSimilarProducts(title) {
+export async function findSimilarProducts(title, accessToken) {
     try {
         const requestBody = {
             productTitle: title
@@ -17,8 +15,21 @@ export async function findSimilarProducts(title) {
         // msalInstance.setActiveAccount(accounts[0]);
 
         // const accessToken = await msalInstance.acquireTokenSilent(tokenRequest);
-        const authResult = await msalInstance.loginPopup();
-        const accessToken = authResult.accessToken;
+        // const authResult = await msalInstance.loginPopup();
+        // const accessToken = authResult.accessToken;
+        if(!accessToken) {
+            const account = msalInstance.getActiveAccount();
+            if(!account) {
+                throw Error("No active accounts. Please sign in to an account");
+            }
+
+            const response = await msalInstance.acquireTokenSilent({
+                ...loginRequest,
+                account: account    
+            });
+            accessToken = response.accessToken;
+        }
+
 
         const response = await fetch(`${apiRequest.url}`, {
             method: 'POST',
