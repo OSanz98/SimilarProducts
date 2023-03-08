@@ -7,6 +7,7 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-reac
 import AuthButton from '../../components/auth-button/auth-button.component';
 
 const HomeRoute = () => {
+
     return(
         <Box sx={{display: 'flex'}}>
             {/* header bar */}

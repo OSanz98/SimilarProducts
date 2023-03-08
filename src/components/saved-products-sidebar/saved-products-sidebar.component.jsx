@@ -16,7 +16,7 @@ const ProductSideBar = ({products, onClick}) => {
             <Toolbar>
                 <Typography color="inherit" variant="h6" noWrap component="div">Products</Typography>
             </Toolbar>
-            <Divider />
+            <Divider sx={{backgroundColor: 'white'}}/>
             <List>
                 {products.map((product) => (
                     <ListItem key={product.title} disablePadding>

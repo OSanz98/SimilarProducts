@@ -1,5 +1,7 @@
 import { apiRequest, loginRequest } from "./authConfig";
 import { msalInstance } from "../index";
+import axios from "axios";
+// import { useMsal } from "@azure/msal-react";
 
 export async function findSimilarProducts(title, accessToken) {
     try {
@@ -7,16 +9,6 @@ export async function findSimilarProducts(title, accessToken) {
             productTitle: title
         };
          
-        // const accounts = await msalInstance.getAllAccounts();
-        // if(accounts.length === 0) {
-        //     throw new Error('No accounts found.');
-        // }
-
-        // msalInstance.setActiveAccount(accounts[0]);
-
-        // const accessToken = await msalInstance.acquireTokenSilent(tokenRequest);
-        // const authResult = await msalInstance.loginPopup();
-        // const accessToken = authResult.accessToken;
         if(!accessToken) {
             const account = msalInstance.getActiveAccount();
             if(!account) {
@@ -28,16 +20,17 @@ export async function findSimilarProducts(title, accessToken) {
                 account: account    
             });
             accessToken = response.accessToken;
+            // console.log(accessToken);
         }
 
-
-        const response = await fetch(`${apiRequest.url}`, {
-            method: 'POST',
+        const config = {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify(requestBody)
-        });
+        };
+
+        const response = await axios.post(`${apiRequest.url}`, config);
 
         const data = await response.json();
         return data;

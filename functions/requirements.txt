@@ -8,3 +8,4 @@ requests
 bs4
 azure-identity
 azure-keyvault-secrets
+azure-functions-auth

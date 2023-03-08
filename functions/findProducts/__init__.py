@@ -7,6 +7,12 @@ from collections import Counter
 from config.db import get_product_info, store_similar_product
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
+from azure_functions_auth import (
+    AzureFunctionsAuthentication,
+    JWTValidationOptions,
+    AllowedCallersList,
+    requires_aad
+)
 import os
 
 app = func.FunctionApp()
@@ -136,6 +142,7 @@ def cosine_similarity_score(search_term, product_name):
     except Exception as e:
         return f"Couldn't calculate cosine similarity score: {e}"
 
+@requires_aad
 @app.route('/api/find-products', methods=["POST"])
 def find_similar_products(req: func.HttpRequest) -> func.HttpResponse:
     # logging.info('Find Similar Products HTTP trigger function processed a request')
